@@ -13,6 +13,11 @@ A minimal, responsive Todo List application built with **React**, **Vite**, **Ta
 ---
 
 ##  Screenshots
+<img src="./public/assets/images/20250614_213411.jpg">
+<img src="./public/assets/images/20250614_213447.jpg">
+<img src="./public/assets/images/20250614_213508.jpg">
+<img src="./public/assets/images/20250614_213526.jpg">
+<img src="./public/assets/images/20250614_213603.jpg">
 
 
 

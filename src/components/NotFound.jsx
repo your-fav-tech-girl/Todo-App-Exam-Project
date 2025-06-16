@@ -1,17 +1,17 @@
-import { Link } from 'react-router-dom';
+// src/components/NotFound.jsx
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
-const NotFound = () => (
-  <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4 text-center">
-    <h1 className="text-5xl font-bold text-red-600 mb-4">404</h1>
-    <p className="text-xl text-red-700 mb-6">Page not found</p>
-    <Link
-      to="/"
-      className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-500"
-    >
-      Back to Home
-    </Link>
-  </div>
-);
-
-export default NotFound;
-
+export default function NotFound() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
+      <div className="max-w-md w-full bg-white shadow rounded-lg p-6 space-y-6 text-center">
+        <h1 className="text-5xl font-extrabold">404</h1>
+        <p className="text-gray-600">Not Found.</p>
+        <Button asChild>
+          <Link to="/">← Back to home</Link>
+        </Button>
+      </div>
+    </div>
+  );
+}

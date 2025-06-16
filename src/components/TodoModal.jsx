@@ -1,80 +1,74 @@
-import React, { useState } from 'react';
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Plus, Save, X } from "lucide-react";
 
-const TodoModal = ({ onClose, onSubmit, initialData }) => {
-  const [formData, setFormData] = useState(() => ({
-    title: initialData?.title || '',
-    completed: initialData?.completed || false,
-  }));
+export default function TodoModal({ onClose, onAdd, onEdit, todo }) {
+  const [title, setTitle] = useState(todo?.title || "");
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
-  };
+  const handleSubmit = () => {
+    const trimmed = title.trim();
+    if (!trimmed) return;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (formData.title.trim() === '') return;
-    onSubmit({
-      ...initialData,
-      ...formData,
-    });
+    if (todo) {
+      onEdit({ ...todo, title: trimmed });
+    } else {
+      const newTodo = {
+        id: Date.now(),
+        title: trimmed,
+        status: "pending",
+        createdAt: new Date().toISOString(),
+      };
+      onAdd(newTodo);
+    }
+
+    onClose();
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg shadow-md p-6 w-full max-w-md">
-        <h2 className="text-xl font-semibold mb-4">
-          {initialData?.id ? 'Edit Todo' : 'Add Todo'}
+    <div
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 bg-black/40 flex items-center justify-center"
+      onClick={onClose}
+      onKeyDown={(e) => e.key === "Escape" && onClose()}
+    >
+      <div
+        className="bg-white rounded p-6 w-80 space-y-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2 className="font-semibold text-lg">
+          {todo ? "Edit Todo" : "New Todo"}
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block mb-1 font-medium">Title</label>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              className="w-full border px-3 py-2 rounded"
-              placeholder="Enter title"
-              required
-            />
-          </div>
+        <Input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Todo title…"
+          autoFocus
+        />
 
-          <div className="flex items-center space-x-2 purple-500">
-            <input
-              type="checkbox"
-              name="completed"
-              checked={formData.completed}
-              onChange={handleChange}
-              id="completed"
-              background='orange'
-            />
-            <label htmlFor="completed">Completed</label>
-          </div>
+        <div className="flex justify-end gap-2 pt-2">
+          <Button variant="outline" onClick={onClose}>
+            <X className="h-4 w-4 mr-1" />
+            Cancel
+          </Button>
 
-          <div className="flex justify-end space-x-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-800"
-            >
-              {initialData?.id ? 'Update' : 'Save'}
-            </button>
-          </div>
-        </form>
+          <Button onClick={handleSubmit}>
+            {todo ? (
+              <>
+                <Save className="h-4 w-4 mr-1" />
+                Save
+              </>
+            ) : (
+              <>
+                <Plus className="h-4 w-4 mr-1" />
+                Add
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );
-};
-
-export default TodoModal;
+}

@@ -1,71 +1,164 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { loadTodos, saveTodos } from '../utils';
-import TodoModal from './TodoModal';
+import { useState, useMemo } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { fetchTodos, loadTodos } from "../api";
+import {CheckCircle,Circle,Pencil,TrashIcon} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
+
+const PAGE_SIZE = 10;
 
 export default function TodoList() {
-  const [todos, setTodos] = useState(loadTodos());
-  const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("all");
+  const queryClient = useQueryClient();
+  const {
+    data: todos = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["todos"],
+    queryFn: fetchTodos,
+    initialData: loadTodos,
+    staleTime: 1000 * 60 * 5,
+  });
+
   const [page, setPage] = useState(1);
-  const [modalOpen, setModalOpen] = useState(false);
-  const todosPerPage = 10;
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [newTodo, setNewTodo] = useState("");
+
+  const totalPages = Math.ceil(todos.length / PAGE_SIZE);
+
+  const handleAdd = () => {
+    if (!newTodo.trim()) return;
+    const newItem = {
+      id: Date.now(),
+      title: newTodo,
+      completed: false,
+    };
+    queryClient.setQueryData(["todos"], (old = []) => [newItem, ...old]);
+    setNewTodo("");
+  };
+
+  const handleDelete = (id) => {
+    queryClient.setQueryData(["todos"], (old = []) =>
+      old.filter((t) => t.id !== id)
+    );
+  };
 
   const filteredTodos = todos
-    .filter(todo => todo.title.toLowerCase().includes(search.toLowerCase()))
-    .filter(todo => filter === "all" || todo.status === filter);
+    .filter((t) => t.title.toLowerCase().includes(search.toLowerCase()))
+    .filter((t) => {
+      if (statusFilter === "completed") return t.completed;
+      if (statusFilter === "incomplete") return !t.completed;
+      return true;
+    });
 
-  const currentTodos = filteredTodos.slice((page - 1) * todosPerPage, page * todosPerPage);
+  const currentItems = useMemo(
+    () => filteredTodos.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+    [filteredTodos, page]
+  );
 
-  const addTodo = (title) => {
-    const newTodo = { id: Date.now(), title, status: "pending" };
-    const updated = [...todos, newTodo];
-    setTodos(updated);
-    saveTodos(updated);
-  };
-
-  const deleteTodo = (id) => {
-    const updated = todos.filter(t => t.id !== id);
-    setTodos(updated);
-    saveTodos(updated);
-  };
+  if (isLoading && todos.length === 0) return <p>Loading…</p>;
+  if (isError) return <p className="text-red-600">Error: {error.message}</p>;
 
   return (
-    <section>
-      <div style={{ marginBottom: '1rem' }}>
-        <input
-          aria-label="Search todos"
-          placeholder="Search..."
-          style={{ marginRight: '0.5rem', padding: '0.5rem' }}
+    <div className="space-y-4">
+      <div className="flex gap-2">
+        <Input
+          placeholder="Search todos..."
           value={search}
-          onChange={e => setSearch(e.target.value)}
+          onChange={(e) => setSearch(e.target.value)}
         />
-        <select
-          aria-label="Filter todos"
-          onChange={e => setFilter(e.target.value)}
-          style={{ marginRight: '0.5rem', padding: '0.5rem' }}
-        >
-          <option value="all">All</option>
-          <option value="pending">Pending</option>
-          <option value="done">Done</option>
-        </select>
-        <button onClick={() => setModalOpen(true)}>Add Todo</button>
+        <Input
+          placeholder="Add new todo..."
+          value={newTodo}
+          onChange={(e) => setNewTodo(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+        />
+        <Button className="bg-green-500 text-white" onClick={handleAdd}>
+          Add{" "}
+        </Button>
       </div>
-      <ul aria-live="polite">
-        {currentTodos.map(todo => (
-          <li key={todo.id} style={{ marginBottom: '0.5rem', padding: '0.5rem', border: '1px solid #ccc', borderRadius: '4px' }}>
-            <Link to={`/todo/${todo.id}`} style={{ color: 'purple', textDecoration: 'underline' }}>{todo.title}</Link>
-            <span style={{ marginLeft: '0.5rem' }}>[{todo.status}]</span>
-            <button onClick={() => deleteTodo(todo.id)} style={{ marginLeft: '0.5rem' }}>Delete</button>
+
+      <div className="flex gap-2">
+        <Button
+          variant={statusFilter === "all" ? "default" : "outline"}
+          onClick={() => setStatusFilter("all")}
+        >
+          All
+        </Button>
+        <Button
+          variant={statusFilter === "completed" ? "default" : "outline"}
+          onClick={() => setStatusFilter("completed")}
+        >
+          Completed
+        </Button>
+        <Button
+          variant={statusFilter === "incomplete" ? "default" : "outline"}
+          onClick={() => setStatusFilter("incomplete")}
+        >
+          Incomplete
+        </Button>
+      </div>
+
+      <ul className="divide-y rounded-lg bg-gray-500 text-grey-600">
+        {currentItems.map((todo) => (
+          <li
+            key={todo.id}
+            className="p-4 flex items-center justify-between gap-3"
+          >
+            <div className="flex items-center gap-3">
+              {todo.completed ? (
+                <CheckCircle className="shrink-0 text-green-500" />
+              ) : (
+                <Circle className="shrink-0 text-gray-600" />
+              )}
+              <Link
+                to={`/todos/${todo.id}`}
+                className={todo.completed ? "line-through opacity-60" : ""}
+              >
+                {todo.title}
+              </Link>
+            </div>
+            <div className="flex gap-2">
+              <Button size="icon" variant="outline">
+                <Pencil className="w-4 h-4 text-green-500" />
+              </Button>
+              <Button
+                size="icon"
+                variant="destructive"
+                onClick={() => handleDelete(todo.id)}
+              >
+                <TrashIcon className="w-4 h-4 text-red-500" />
+              </Button>
+            </div>
           </li>
         ))}
       </ul>
-      <div style={{ marginTop: '1rem' }}>
-        <button onClick={() => setPage(p => Math.max(p - 1, 1))}>Previous</button>
-        <span style={{ margin: '0 1rem' }}>Page {page}</span>
-        <button onClick={() => setPage(p => p + 1)}>Next</button>
-      </div>
-      {modalOpen && <TodoModal onClose={() => setModalOpen(false)} onAdd={addTodo} />}
-    </section>
+
+      <div className="flex justify-between items-center gap-2">
+  <Button
+    variant="outline"
+    disabled={page === 1}
+    onClick={() => setPage((p) => p - 1)}
+  >
+    Prev
+  </Button>
+
+  <span className="text-sm text-muted-foreground">
+    Page {page} of {totalPages}
+  </span>
+
+  <Button
+    variant="outline"
+    disabled={page === totalPages}
+    onClick={() => setPage((p) => p + 1)}
+  >
+    Next
+  </Button>
+</div>
+
+    </div>
   );
 }

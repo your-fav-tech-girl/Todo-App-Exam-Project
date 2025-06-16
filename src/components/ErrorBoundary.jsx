@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "./ui/button";
 import { AlertTriangle } from "lucide-react";
 
 export default class ErrorBoundary extends Component {

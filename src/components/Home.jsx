@@ -63,7 +63,9 @@ const Home = () => {
             className="border px-2 py-2 pl-8 rounded"
             aria-label="Filter todos"
           >
-            <option value="all">All</option>
+            <option value="all"
+            className='text-gray-700 '
+            >All</option>
             <option value="complete">Complete</option>
             <option value="incomplete">Incomplete</option>
           </select>

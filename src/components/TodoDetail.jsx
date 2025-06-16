@@ -2,9 +2,9 @@ import React from "react";
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { loadTodos, saveTodos } from "../api";
-import {Card,CardHeader,CardTitle,CardContent,CardFooter} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import {Card,CardHeader,CardTitle,CardContent,CardFooter} from "./ui/card";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
 import { CheckCircle2, Circle, Undo2, ArrowLeft } from "lucide-react";
 
 export default function TodoDetail() {

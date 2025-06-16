@@ -2,8 +2,8 @@ import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchTodos, loadTodos } from "../api";
 import {CheckCircle,Circle,Pencil,TrashIcon} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import { Link } from "react-router-dom";
 
 const PAGE_SIZE = 10;
@@ -76,7 +76,7 @@ export default function TodoList() {
           onChange={(e) => setNewTodo(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleAdd()}
         />
-        <Button className="bg-green-500 text-white" onClick={handleAdd}>
+        <Button className="bg-green-400 text-white hover:bg-green-600" onClick={handleAdd}>
           Add{" "}
         </Button>
       </div>

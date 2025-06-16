@@ -87,7 +87,6 @@ export default function TodoList() {
         </Button>
       </div>
 
-      {/* Filter Buttons */}
       <div className="flex flex-wrap gap-2 justify-start">
         <Button
           variant={statusFilter === "all" ? "default" : "outline"}
@@ -96,7 +95,7 @@ export default function TodoList() {
           All
         </Button>
         <Button
-          variant={statusFilter === "completed" ? "outline": "none"}
+          variant={statusFilter === "completed" ? "default": "outline"}
           onClick={() => setStatusFilter("completed")}
         >
           Completed
@@ -109,56 +108,55 @@ export default function TodoList() {
         </Button>
       </div>
 
-      {/* Todo List */}
       <ul className="divide-y rounded-lg bg-gray-100 shadow">
-        {currentItems.map((todo) => (
-          <li
-            key={todo.id}
-            className="p-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-4"
-          >
-            <div className="flex items-center gap-3 break-words">
-              {todo.completed ? (
-                <CheckCircle className="text-green-500 shrink-0" />
-              ) : (
-                <Circle className="text-gray-500 shrink-0" />
-              )}
-              <Link
-                to={`/todos/${todo.id}`}
-                className={`text-base ${todo.completed ? "line-through opacity-60" : ""}`}
-              >
-                {todo.title}
-              </Link>
-            </div>
-            <div className="flex gap-2">
-              <Button size="icon" variant="outline">
-                <Pencil className="w-4 h-4 text-green-500" />
-              </Button>
-              <Button size="icon" variant="destructive" onClick={() => handleDelete(todo.id)}>
-                <TrashIcon className="w-4 h-4 text-red-500" />
-              </Button>
-            </div>
-          </li>
-        ))}
-      </ul>
+  {currentItems.map((todo) => (
+    <li
+      key={todo.id}
+      className="p-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4"
+    >
+      {/* Left side: Icon + Title */}
+      <div className="flex items-start gap-3 w-full sm:w-auto break-words">
+        {todo.completed ? (
+          <CheckCircle className="text-green-500 shrink-0 mt-1" />
+        ) : (
+          <Circle className="text-gray-500 shrink-0 mt-1" />
+        )}
+        <Link
+          to={`/todos/${todo.id}`}
+          className={`text-base ${todo.completed ? "line-through opacity-60" : ""}`}
+        >
+          {todo.title}
+        </Link>
+      </div>
 
+      {/* Right side: Actions */}
+      <div className="flex gap-2 self-end sm:self-auto">
+        <Button size="icon" variant="outline">
+          <Pencil className="w-4 h-4 text-green-500" />
+        </Button>
+        <Button size="icon" variant="destructive" onClick={() => handleDelete(todo.id)}>
+          <TrashIcon className="w-4 h-4 text-red-500" />
+        </Button>
+      </div>
+    </li>
+  ))}
+</ul>
       {/* Pagination */}
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
+      <div className="flex justify-between items-center mt-4">
         <Button
           variant="outline"
           disabled={page === 1}
-          onClick={() => setPage((p) => p - 1)}
+          onClick={() => setPage((p) => Math.max(p - 1, 1))}
         >
-          Prev
+          Previous
         </Button>
-
-        <span className="text-sm text-muted-foreground">
+        <span>
           Page {page} of {totalPages}
         </span>
-
         <Button
           variant="outline"
           disabled={page === totalPages}
-          onClick={() => setPage((p) => p + 1)}
+          onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
         >
           Next
         </Button>

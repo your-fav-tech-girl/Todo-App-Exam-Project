@@ -9,11 +9,11 @@ export default function Layout() {
         <h1 className="text-2xl sm:text-4xl sm:items-center font-bold text-green-600">Todo App</h1>
 
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <Button variant="danger" asChild>
+          <Button variant="danger" aschild="true">
             <Link to="/test-error">Trigger Error</Link>
           </Button>
 
-          <Button variant="ghost" asChild>
+          <Button variant="ghost" aschild="true">
             <Link to="/">Home</Link>
           </Button>
         </div>

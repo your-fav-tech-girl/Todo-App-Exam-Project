@@ -141,26 +141,29 @@ export default function TodoList() {
     </li>
   ))}
 </ul>
-      {/* Pagination */}
-      <div className="flex justify-between items-center mt-4">
-        <Button
-          variant="outline"
-          disabled={page === 1}
-          onClick={() => setPage((p) => Math.max(p - 1, 1))}
-        >
-          Previous
-        </Button>
-        <span>
-          Page {page} of {totalPages}
-        </span>
-        <Button
-          variant="outline"
-          disabled={page === totalPages}
-          onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-        >
-          Next
-        </Button>
-      </div>
+<div className="flex flex-col sm:flex-row justify-between items-center gap-3 mt-4">
+  <Button
+    variant="outline"
+    className="w-full sm:w-auto"
+    disabled={page === 1}
+    onClick={() => setPage((p) => p - 1)}
+  >
+    Prev
+  </Button>
+
+  <span className="text-sm text-muted-foreground text-center">
+    Page {page} of {totalPages}
+  </span>
+
+  <Button
+    variant="outline"
+    className="w-full sm:w-auto"
+    disabled={page === totalPages}
+    onClick={() => setPage((p) => p + 1)}
+  >
+    Next
+  </Button>
+</div>
     </div>
   );
 }

@@ -70,11 +70,19 @@ Responsive layouts and mobile-friendly design by default.
 # UI Features
  Create, Edit,Update, Delete Todos.
 
+ Home button toggle 
+
+ Add new Todo by input,then Add 
+
+ Search Todo by title 
+
+ Filter for completed,Incomplete and All
+
  Paginated List.
 
  Filter by Title.
 
- Calendar View for 404 page (not found).
+ Run in the browser  http://localhost:5175/testerror for 404 page (not found).
 
  Error Boundaries and Test Error(to tirigger error).
 

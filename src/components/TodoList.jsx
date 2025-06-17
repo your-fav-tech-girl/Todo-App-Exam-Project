@@ -19,7 +19,8 @@ export default function TodoList() {
     queryKey: ["todos"],
     queryFn: fetchTodos,
     initialData: loadTodos,
-    staleTime: 1000 * 60 * 5,
+    staleTime:5000,
+  
   });
 
   const [page, setPage] = useState(1);

@@ -26,6 +26,8 @@ export default function TodoList() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [newTodo, setNewTodo] = useState("");
+  const [editingId, setEditingId] = useState(null);
+  const [editValue, setEditValue] = useState("");
 
   const totalPages = Math.ceil(todos.length / PAGE_SIZE);
 
@@ -131,9 +133,37 @@ export default function TodoList() {
 
       {/* Right side: Actions */}
       <div className="flex gap-2 self-end sm:self-auto">
-        <Button size="icon" variant="outline">
-          <Pencil className="w-4 h-4 text-green-500" />
+        <Button
+          size="icon"
+          variant="secondary"
+          asChild
+          onClick={() => {
+            setEditingId(todo.id);
+            setEditValue(todo.title);
+          }}
+        >
+          <Link to={`/todos/${todo.id}`}>
+            <Pencil className="w-4 h-4 text-green-500" />
+          </Link>
         </Button>
+
+        {editingId === todo.id && (
+          <Input
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            onBlur={() => {
+              queryClient.setQueryData(["todos"], (old = []) =>
+                old.map((t) =>
+                  t.id === todo.id ? { ...t, title: editValue } : t
+                )
+              );
+              setEditingId(null);
+              setEditValue("");
+            }}
+            className="w-32"
+          />
+        )}
+
         <Button size="icon" variant="destructive" onClick={() => handleDelete(todo.id)}>
           <TrashIcon className="w-4 h-4 text-red-500" />
         </Button>

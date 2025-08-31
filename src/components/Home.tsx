@@ -1,28 +1,49 @@
-import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { fetchTodos } from '../api';
-import {Plus,Eye,ChevronLeft,ChevronRight,Search,Filter,} from 'lucide-react';
+import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { fetchTodos } from "../api";
+import {
+  Plus,
+  Eye,
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  Filter,
+} from "lucide-react";
+
+interface Home {
+  userId: number;
+  id: number;
+  title: string;
+  completed: boolean;
+}
 
 const ItemsPerPage = 10;
 
 const Home = () => {
-  const { data: todos = [], isLoading, isError, error } = useQuery({
-    queryKey: ['todos'],
+  const {
+    data: todos = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["todos"],
     queryFn: fetchTodos,
   });
 
-  const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState('all');
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("all");
   const [page, setPage] = useState(1);
 
   const filteredTodos = useMemo(() => {
-    return todos
-      .filter((todo) => todo.title.toLowerCase().includes(search.toLowerCase()))
-      .filter((todo) =>
-        filter === 'all'
+    return (todos as Home[])
+      .filter((todo: Home) =>
+        todo.title.toLowerCase().includes(search.toLowerCase())
+      )
+      .filter((todo: Home) =>
+        filter === "all"
           ? true
-          : filter === 'complete'
+          : filter === "complete"
           ? todo.completed
           : !todo.completed
       );
@@ -36,11 +57,14 @@ const Home = () => {
   const totalPages = Math.ceil(filteredTodos.length / ItemsPerPage);
 
   if (isLoading) return <p className="text-center">Loading todos...</p>;
-  if (isError) return <p className="text-center text-red-500">{error.message}</p>;
+  if (isError)
+    return <p className="text-center text-red-500">{error.message}</p>;
 
   return (
     <div className="p-4 max-w-4xl mx-auto purple-500">
-      <h1 className="text-4xl font-bold mb-4 text-center text-purple-400">Todo List</h1>
+      <h1 className="text-4xl font-bold mb-4 text-center text-purple-400">
+        Todo List
+      </h1>
 
       <div className="mb-4 flex flex-wrap gap-2 items-center">
         <div className="relative">
@@ -51,9 +75,8 @@ const Home = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             aria-label="Search todos"
-           />
+          />
           <Search className="absolute left-2 top-3 text-gray-400" size={20} />
-         
         </div>
 
         <div className="relative">
@@ -63,9 +86,9 @@ const Home = () => {
             className="border px-2 py-2 pl-8 rounded"
             aria-label="Filter todos"
           >
-            <option value="all"
-            className='text-gray-700 '
-            >All</option>
+            <option value="all" className="text-gray-700 ">
+              All
+            </option>
             <option value="complete">Complete</option>
             <option value="incomplete">Incomplete</option>
           </select>
@@ -89,8 +112,7 @@ const Home = () => {
           >
             <div>
               <p className="font-medium">{todo.title}</p>
-              <p className="text-sm text-red-600">
-              </p>
+              <p className="text-sm text-red-600"></p>
             </div>
             <Link
               to={`/todos/${todo.id}`}
@@ -112,7 +134,9 @@ const Home = () => {
           <ChevronLeft size={18} />
           Prev
         </button>
-        <span>Page {page} of {totalPages}</span>
+        <span>
+          Page {page} of {totalPages}
+        </span>
         <button
           disabled={page === totalPages}
           onClick={() => setPage((p) => p + 1)}

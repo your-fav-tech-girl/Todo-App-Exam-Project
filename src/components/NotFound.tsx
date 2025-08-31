@@ -8,7 +8,7 @@ export default function NotFound() {
       <div className="max-w-md w-full bg-white shadow rounded-lg p-6 space-y-6 text-center">
         <h1 className="text-5xl font-extrabold">404</h1>
         <p className="text-gray-600">Not Found.</p>
-        <Button asChild>
+        <Button>
           <Link to="/">← Back to home</Link>
         </Button>
       </div>

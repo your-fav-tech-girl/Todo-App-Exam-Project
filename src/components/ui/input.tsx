@@ -1,6 +1,11 @@
 import React from "react";
 
-export const Input = React.forwardRef(
+type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
+  className?: string;
+  type?: string;
+};
+
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className = "", type = "text", ...props }, ref) => {
     return (
       <input

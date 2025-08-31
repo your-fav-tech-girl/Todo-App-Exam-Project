@@ -1,9 +1,21 @@
 import { useState } from "react";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
+import { Input } from "./ui/input.tsx";
+import { Button } from "./ui/button.tsx";
 import { Plus, Save, X } from "lucide-react";
 
-export default function TodoModal({ onClose, onAdd, onEdit, todo }) {
+type TodoModalProps = {
+  onClose: any;
+  onAdd: any;
+  onEdit: any;
+  todo: any;
+};
+
+export default function TodoModalProps({
+  onClose,
+  onAdd,
+  onEdit,
+  todo,
+}: TodoModalProps) {
   const [title, setTitle] = useState(todo?.title || "");
 
   const handleSubmit = () => {

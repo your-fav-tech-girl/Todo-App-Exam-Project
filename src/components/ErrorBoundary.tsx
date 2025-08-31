@@ -2,16 +2,28 @@ import { Component } from "react";
 import { Button } from "./ui/button";
 import { AlertTriangle } from "lucide-react";
 
-export default class ErrorBoundary extends Component {
-  state = { hasError: false, error: null };
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: Error | null;
+}
 
-  static getDerivedStateFromError(error) {
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+}
+
+export default class ErrorBoundary extends Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
+  state: ErrorBoundaryState = { hasError: false, error: null };
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { hasError: true, error };
   }
 
   handleReload = () => {
     this.setState({ hasError: false, error: null });
-    window.location.replace("/");           
+    window.location.replace("/");
   };
 
   render() {
